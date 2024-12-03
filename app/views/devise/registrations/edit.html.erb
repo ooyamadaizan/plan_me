@@ -1,0 +1,38 @@
+<div class="main">
+  <div class="inner">
+    <div class="form__wrapper">
+      <h2 class="page-heading">ユーザー情報の編集</h2>
+
+      <%= form_with model: @user, url: user_registration_path, id: 'edit_user', class: 'edit_user', local: true do |f| %>
+        <%= render "devise/shared/error_messages", model: f.object %>
+
+        <div class="field">
+          <%= f.label :nickname, "ニックネーム" %><br />
+          <%= f.text_field :nickname, value: @user.nickname, autofocus: true, required: true %>
+        </div>
+
+        <div class="field">
+          <%= f.label :email, "メールアドレス" %><br />
+          <%= f.email_field :email, value: @user.email, id:"user_email", autocomplete: "email", required: true %>
+        </div>
+
+        <div class="field">
+          <%= f.label :password, "新しいパスワード（6文字以上）" %><br />
+          <%= f.password_field :password, id:"user_password", autocomplete: "new-password" %>
+          <small>変更しない場合は空白のままにしてください。</small>
+        </div>
+
+        <div class="field">
+          <%= f.label :password_confirmation, "パスワード再入力" %><br />
+          <%= f.password_field :password_confirmation, id:"user_password_confirmation", autocomplete: "new-password" %>
+        </div>
+
+        <div class="actions">
+          <%= f.submit "更新", class: "form__btn" %>
+        </div>
+      <% end %>
+
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

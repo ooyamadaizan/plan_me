@@ -29,19 +29,19 @@
 ## エンティティ
 
 ### User（ユーザー）
-- id: integer
+- id: (主キー)
 - email: string
 - encrypted_password: string
 - created_at: datetime
 - updated_at: datetime
 
 ### Task（タスク）
-- id: integer
+- id: (主キー)
 - title: string
 - description: text
 - due_date: date
 - completed: boolean
-- user_id: integer (外部キー)
+- user_id: references (外部キー)
 - created_at: datetime
 - updated_at: datetime
 
