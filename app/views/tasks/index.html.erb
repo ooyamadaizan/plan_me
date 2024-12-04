@@ -1,0 +1,26 @@
+<h1>Tasks</h1>
+
+<%= month_calendar(events: @tasks) do |date, tasks| %>
+  <%= date %>
+
+  <% tasks.each do |task| %>
+    <div>
+      <%= task.title %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= link_to 'New Task', new_task_path %>
+
+<div id="digital-clock"></div>
+
+<script>
+function updateClock() {
+  const now = new Date();
+  const clock = document.getElementById('digital-clock');
+  clock.textContent = now.toLocaleTimeString();
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
