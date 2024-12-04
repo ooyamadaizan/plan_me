@@ -1,34 +1,42 @@
-<%= form_with model: @user, url: user_registration_path, id: 'edit_user', class: 'edit_user', local: true do |f| %>
-  <%= render "devise/shared/error_messages", model: f.object %>
+<div class="main">
+  <div class="inner">
+    <div class="form__wrapper" id="edit-user-form">
+      <h2 class="page-heading">ユーザー情報編集</h2>
 
-  <div class="field">
-    <%= f.label :nickname, "ニックネーム" %><br />
-    <%= f.text_field :nickname, value: @user.nickname, autofocus: true, required: true %>
-  </div>
+      <%= form_with model: @user, url: user_registration_path, id: 'edit_user', class: 'edit_user', local: true do |f| %>
+        <%= render "devise/shared/error_messages", model: f.object %>
 
-  <div class="field">
-    <%= f.label :email, "メールアドレス" %><br />
-    <%= f.email_field :email, value: @user.email, id:"user_email", autocomplete: "email", required: true %>
-  </div>
+        <div class="field">
+          <%= f.label :nickname, "ニックネーム", class: "form-label" %><br />
+          <%= f.text_field :nickname, class: "form-input", value: @user.nickname, autofocus: true, required: true %>
+        </div>
 
-  <div class="field">
-    <%= f.label :current_password, "現在のパスワード" %><br />
-    <%= f.password_field :current_password, required: true %>
-    <small>パスワードを変更する場合は、現在のパスワードを入力してください。</small>
-  </div>
+        <div class="field">
+          <%= f.label :email, "メールアドレス", class: "form-label" %><br />
+          <%= f.email_field :email, class: "form-input", value: @user.email, id:"user_email", autocomplete: "email", required: true %>
+        </div>
 
-  <div class="field">
-    <%= f.label :password, "新しいパスワード（6文字以上）" %><br />
-    <%= f.password_field :password, id:"user_password", autocomplete: "new-password" %>
-    <small>変更しない場合は空白のままにしてください。</small>
-  </div>
+        <div class="field">
+          <%= f.label :current_password, "現在のパスワード", class: "form-label" %><br />
+          <%= f.password_field :current_password, class: "form-input", required: true %>
+          <small class="form-help">パスワードを変更する場合は、現在のパスワードを入力してください。</small>
+        </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "パスワード再入力" %><br />
-    <%= f.password_field :password_confirmation, id:"user_password_confirmation", autocomplete: "new-password" %>
-  </div>
+        <div class="field">
+          <%= f.label :password, "新しいパスワード（6文字以上）", class: "form-label" %><br />
+          <%= f.password_field :password, id:"user_password", class: "form-input", autocomplete: "new-password" %>
+          <small class="form-help">変更しない場合は空白のままにしてください。</small>
+        </div>
 
-  <div class="actions">
-    <%= f.submit "更新", class: "form__btn" %>
+        <div class="field">
+          <%= f.label :password_confirmation, "パスワード再入力", class: "form-label" %><br />
+          <%= f.password_field :password_confirmation, id:"user_password_confirmation", class: "form-input", autocomplete: "new-password" %>
+        </div>
+
+        <div class="actions">
+          <%= f.submit "更新", class: "form__btn" %>
+        </div>
+      <% end %>
+    </div>
   </div>
-<% end %>
+</div>

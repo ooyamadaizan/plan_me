@@ -1,19 +1,19 @@
 <div class="main">
   <div class="inner">
-    <div class="form__wrapper">    
+    <div class="form__wrapper" id="login-form">
       <h2 class="page-heading">ユーザーログイン</h2>
       
       <%= form_with model: @user, url: user_session_path, id: 'new_user', class: 'new_user', local: true do |f| %>
         <%= render "devise/shared/error_messages", model: f.object %>
 
         <div class="field">
-          <%= f.label :email, "メールアドレス" %><br />
-          <%= f.email_field :email, id: "user_email", autofocus: true, autocomplete: "email", required: true %>
+          <%= f.label :email, "メールアドレス", class: "form-label" %><br />
+          <%= f.email_field :email, id: "user_email", class: "form-input", autofocus: true, autocomplete: "email", required: true %>
         </div>
 
         <div class="field">
-          <%= f.label :password, "パスワード（6文字以上）" %><br />
-          <%= f.password_field :password, id: "user_password", autocomplete: "current-password", required: true %>
+          <%= f.label :password, "パスワード（6文字以上）", class: "form-label" %><br />
+          <%= f.password_field :password, id: "user_password", class: "form-input", autocomplete: "current-password", required: true %>
         </div>
 
         <div class="actions">
@@ -25,3 +25,4 @@
     </div>
   </div>
 </div>
+
