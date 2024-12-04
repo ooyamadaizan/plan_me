@@ -1,7 +1,9 @@
+<%= render "shared/sign_in_out" %>
+
 <h1>Tasks</h1>
 
 <%= month_calendar(events: @tasks) do |date, tasks| %>
-  <%= date %>
+  <%= date.day %>
 
   <% tasks.each do |task| %>
     <div>
