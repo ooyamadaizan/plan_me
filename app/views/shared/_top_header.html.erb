@@ -1,0 +1,13 @@
+<div class="top-header" id="top-header">
+  <% if user_signed_in? %>
+    <div class="top-link" id="signed-in-links">
+      <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: :nav_btn, id: "logout-link" %>
+      <%= link_to "ユーザー登録内容編集", edit_user_registration_path, data: { turbo: false }, class: :nav_btn, id: "edit-registration-link" %>
+    </div>
+  <% else %>
+    <div class="top-link" id="guest-links">
+      <%= link_to "ログイン", new_user_session_path, class: :nav_btn, id: "login-link" %>
+      <%= link_to "新規登録", new_user_registration_path, class: :nav_btn, id: "sign-up-link" %>
+    </div>
+  <% end %>
+</div>
