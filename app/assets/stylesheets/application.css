@@ -1,5 +1,6 @@
 /*
  *= require_self
+ *= require_reset
  *= require style
  *= require devise
  */
@@ -12,10 +13,10 @@ body {
 }
 
 .container {
-  width: 80%;
+  width: 100%;
   margin: auto;
   overflow: hidden;
-  padding: 20px;
+  padding: 5px;
 }
 
 /* その他の全体的なスタイル */

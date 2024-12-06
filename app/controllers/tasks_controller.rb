@@ -1,42 +1,40 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
   def index
-    @tasks = Task.all
-    start_date = params[:start_date] ? Date.parse(params[:start_date]) : Date.today
-    @tasks = Task.where(due_date: start_date.beginning_of_month..start_date.end_of_month)
-  end
-
-  def new
+    @tasks = current_user.tasks.order(created_at: :desc).limit(6)
     @task = Task.new
+    start_date = params[:start_date] ? Date.parse(params[:start_date]) : Date.today
+    @calendar_tasks = current_user.tasks.where(due_date: start_date.beginning_of_month..start_date.end_of_month)
   end
 
   def create
-    if current_user.nil?
-      redirect_to new_user_session_path, alert: 'You must be logged in to create a task.'
+    @task = current_user.tasks.build(task_params)
+    if @task.save
+      @tasks = current_user.tasks.order(created_at: :desc).limit(6)
+      render partial: 'shared/task', collection: @tasks
     else
-      @task = Task.new(task_params)
-      @task.user = current_user
-      @task.save
+      render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def show
+  def update
+    @task = current_user.tasks.find(params[:id])
+    if @task.update(task_params)
+      head :ok
+    else
+      render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
-  def edit
-  end
-
-  def destroy
+  def reorder
+    @tasks = current_user.tasks.order(created_at: :desc).offset(params[:offset]).limit(6)
+    render partial: 'shared/task', collection: @tasks
   end
 
   private
 
-  def set_task
-    @task = Task.find(params[:id])
-  end
-
   def task_params
-    params.require(:task).permit(:title, :description, :due_date, :completed, :user_id, :start_time)
+    params.require(:task).permit(:title, :description, :due_date, :completed)
   end
 end
