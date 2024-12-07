@@ -55,6 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('#tasks-container > div').length < 6;
   }
 
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.className = `notification ${type}`; // 'success' or 'error'
+    document.body.appendChild(notification);
+  
+    // 通知を3秒後に自動で削除
+    setTimeout(() => notification.remove(), 3000);
+  }
   // タスクのタイトルまたは説明のインライン編集を処理するイベントリスナー
   document.addEventListener('click', function(e) {
     if (
@@ -64,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ) {
        // タスクのステータス（完了チェック）を更新
       if (e.target.classList.contains('task-status')) {
+        const taskItem = e.target.closest('.task-item');
         const statusTaskId = e.target.closest('.task-item').dataset.taskId;
         const completed = e.target.checked;
 
@@ -78,6 +88,28 @@ document.addEventListener('DOMContentLoaded', function() {
               completed: completed
             }
           })
+        })
+        .then(response => {
+          if (!response.ok) {
+            // エラーコードやレスポンス内容を含めたエラーを投げる
+            return response.json().then(err => {
+              throw new Error(err.errors || 'Unknown error');
+            });
+          }
+          return response.text().then(text => (text ? JSON.parse(text) : {}));
+        })
+        .then(() => {
+          if (completed) {
+            taskItem.classList.add('completed');
+          } else {
+            taskItem.classList.remove('completed');
+          }
+          showNotification('タスクが正常に更新されました！', 'success');
+        })
+        .catch(error => {
+          console.error('Error updating task:', error);
+          e.target.checked = !completed;
+          showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
         });
       }
 

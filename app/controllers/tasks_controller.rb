@@ -34,7 +34,7 @@ class TasksController < ApplicationController
     @task = current_user.tasks.find(params[:id])
     if @task.update(task_params)
       # 更新成功時、HTTPステータスコード200を返す
-      head :ok
+      render json: { success: true, message: "Task updated successfully" }, status: :ok
     else
       # 更新失敗時、エラーメッセージをJSON形式で返す
       render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
