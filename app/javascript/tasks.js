@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   let offset = 0;
 
+  // 新しいタスクを作成するボタンのイベントリスナー
   document.getElementById('create-task-btn').addEventListener('click', function() {
     fetch('/tasks', {
       method: 'POST',
@@ -24,16 +25,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // 前のページへ移動するボタンのイベントリスナー
   document.getElementById('prev-tasks').addEventListener('click', function() {
     offset = Math.max(0, offset - 6);
     fetchTasks();
   });
 
+  // 次のページへ移動するボタンのイベントリスナー
   document.getElementById('next-tasks').addEventListener('click', function() {
     offset += 6;
     fetchTasks();
   });
 
+  // サーバーからタスクを取得する関数
   function fetchTasks() {
     fetch(`/tasks/reorder?offset=${offset}`)
       .then(response => response.text())
@@ -43,11 +47,13 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
+  // ページネーションボタンの状態を更新する関数
   function updatePaginationButtons() {
     document.getElementById('prev-tasks').disabled = offset === 0;
     document.getElementById('next-tasks').disabled = document.querySelectorAll('#tasks-container > div').length < 6;
   }
 
+  // タスクのタイトルまたは説明のインライン編集を処理するイベントリスナー
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('task-title') || e.target.classList.contains('task-description')) {
       e.target.addEventListener('blur', function() {
@@ -71,12 +77,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // デジタル時計を更新する関数
   function updateClock() {
     const now = new Date();
     const clock = document.getElementById('digital-clock');
     clock.textContent = now.toLocaleTimeString();
   }
 
+  // デジタル時計を1秒ごとに更新
   setInterval(updateClock, 1000);
   updateClock();
 });
+
