@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('tasks-container').innerHTML = html;
       offset = 0;
       updatePaginationButtons();
+      fetchTasks(); // 新しく作成したタスクを含めてリストを更新
     });
   });
 
@@ -50,18 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
   // ページネーションボタンの状態を更新する関数
   function updatePaginationButtons() {
     document.getElementById('prev-tasks').disabled = offset === 0;
-    document.getElementById('next-tasks').disabled = document.querySelectorAll('#tasks-container > div').length < 6;
+    document.getElementById('next-tasks').disabled =
+      document.querySelectorAll('#tasks-container > div').length < 6;
   }
 
   // タスクのタイトルまたは説明のインライン編集を処理するイベントリスナー
   document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('task-title') || e.target.classList.contains('task-description')) {
-      e.target.addEventListener('blur', function() {
-        const taskId = this.closest('.task-item').dataset.taskId;
-        const field = this.classList.contains('task-title') ? 'title' : 'description';
-        const value = this.textContent;
+    if (
+      e.target.classList.contains('task-title') ||
+      e.target.classList.contains('task-description') ||
+      e.target.classList.contains('task-status')
+    ) {
+       // タスクのステータス（完了チェック）を更新
+      if (e.target.classList.contains('task-status')) {
+        const statusTaskId = e.target.closest('.task-item').dataset.taskId;
+        const completed = e.target.checked;
 
-        fetch(`/tasks/${taskId}`, {
+        fetch(`/tasks/${statusTaskId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -69,11 +75,40 @@ document.addEventListener('DOMContentLoaded', function() {
           },
           body: JSON.stringify({
             task: {
-              [field]: value
+              completed: completed
             }
           })
         });
-      }, { once: true });
+      }
+
+      // タイトルまたは説明の編集
+      if (
+        e.target.classList.contains('task-title') ||
+        e.target.classList.contains('task-description')
+      ) {
+        e.target.addEventListener(
+          'blur',
+          function() {
+            const taskId = this.closest('.task-item').dataset.taskId;
+            const field = this.classList.contains('task-title') ? 'title' : 'description';
+            const value = this.textContent;
+
+            fetch(`/tasks/${taskId}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+              },
+              body: JSON.stringify({
+                task: {
+                  [field]: value
+                }
+              })
+            });
+          },
+          { once: true }
+        );
+      }
     }
   });
 
