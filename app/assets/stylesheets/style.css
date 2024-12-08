@@ -40,18 +40,44 @@ body {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 0.25rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 0.3rem; /* Updated padding */
+  margin-bottom: 0.3rem; /* Updated margin */
 }
 
 .task-title {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem; /* Updated margin */
+  line-height: 1.2; /* Updated line-height */
 }
 
 .task-description {
-  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 0.1rem; /* Updated margin */
+  line-height: 1.2; /* Updated line-height */
+}
+
+.task-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.1rem; /* Updated margin */
+  font-size: 0.75rem;
+}
+
+.task-due-date,
+.task-completed,
+.task-delete-button {
+  margin: 0 10px;
+}
+
+.task-completed {
+  display: flex;
+  align-items: center;
+}
+
+.task-completed input[type="checkbox"] {
+  margin-right: 5px;
 }
 
 [contenteditable="true"]:focus {
@@ -170,13 +196,14 @@ body {
 }
 
 .task-delete-button {
-  margin-top: 10px;
+  margin-top: 0;
   background-color: #e3342f;
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 2px 5px;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 0.75rem;
 }
 
 .task-delete-button:hover {
@@ -199,3 +226,4 @@ body {
     width: 100%;
   }
 }
+

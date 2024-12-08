@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkbox.addEventListener('change', function () {
       const taskItem = this.closest('.task-item');
       const deleteButton = taskItem.querySelector('.task-delete-button');
+      
       if (this.checked) {
         deleteButton.disabled = false; // チェックが入っている場合は削除ボタンを有効化
       } else {
