@@ -169,6 +169,26 @@ body {
   background-color: #dc3545; /* 赤色 */
 }
 
+.task-delete-button {
+  margin-top: 10px;
+  background-color: #e3342f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.task-delete-button:hover {
+  background-color: #cc1f1a;
+}
+
+.task-delete-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
   .main-container {
