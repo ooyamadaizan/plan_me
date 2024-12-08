@@ -62,14 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(notification);
   
     // 通知を3秒後に自動で削除
-    setTimeout(() => notification.remove(), 3000);
+    setTimeout(() => notification.remove(), 1300);
   }
   // タスクのタイトルまたは説明のインライン編集を処理するイベントリスナー
   document.addEventListener('click', function(e) {
     if (
       e.target.classList.contains('task-title') ||
       e.target.classList.contains('task-description') ||
-      e.target.classList.contains('task-status')
+      e.target.classList.contains('task-status')||
+      e.target.classList.contains('task-due-date')
     ) {
        // タスクのステータス（完了チェック）を更新
       if (e.target.classList.contains('task-status')) {
@@ -116,14 +117,37 @@ document.addEventListener('DOMContentLoaded', function() {
       // タイトルまたは説明の編集
       if (
         e.target.classList.contains('task-title') ||
-        e.target.classList.contains('task-description')
+        e.target.classList.contains('task-description') ||
+        e.target.classList.contains('task-due-date')
       ) {
+        console.log('e.target:', e.target);
+        console.log('Contains task-due-date:', e.target.classList.contains('task-due-date'));
+
         e.target.addEventListener(
           'blur',
           function() {
             const taskId = this.closest('.task-item').dataset.taskId;
-            const field = this.classList.contains('task-title') ? 'title' : 'description';
-            const value = this.textContent;
+            const field = this.classList.contains('task-title')
+              ? 'title'
+              : this.classList.contains('task-description')
+              ? 'description'
+              : this.classList.contains('task-due-date')
+              ? 'due_date'
+              : null;
+              console.log('this:', this);
+              console.log('textContent:', this.textContent);
+            // フィールドがnullの場合は何もしない
+            if (!field) return;
+            let value = this.textContent;
+            if (field === 'due_date') {
+              value = value
+                .replace('期限: ', '') // "期限: "を削除
+                .replace(/年/, '-') // "年"を"-"に置換
+                .replace(/月/, '-') // "月"を"-"に置換
+                .replace(/日/, '') // "日"を削除
+                .trim(); // 前後の余計な空白を削除
+                console.log('変換後:', value);
+            }
 
             fetch(`/tasks/${taskId}`, {
               method: 'PATCH',
@@ -133,9 +157,22 @@ document.addEventListener('DOMContentLoaded', function() {
               },
               body: JSON.stringify({
                 task: {
-                  [field]: value
-                }
-              })
+                  [field]: value,
+                },
+              }),
+            })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Failed to update the task');
+              }
+              return response.json();
+            })
+            .then((data) => {
+              showNotification('タスクが正常に更新されました！', 'success');
+            })
+            .catch((error) => {
+              console.error('Error updating task:', error);
+              showNotification('タスクの更新に失敗しました', 'error');
             });
           },
           { once: true }
