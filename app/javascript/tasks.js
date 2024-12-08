@@ -180,6 +180,51 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+  document.querySelectorAll('.task-status').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+      const taskItem = this.closest('.task-item');
+      const deleteButton = taskItem.querySelector('.task-delete-button');
+      if (this.checked) {
+        deleteButton.disabled = false; // チェックが入っている場合は削除ボタンを有効化
+      } else {
+        deleteButton.disabled = true; // チェックが外れている場合は削除ボタンを無効化
+      }
+    });
+  });
+
+  // 削除ボタンのクリック処理（先ほどのコードと同じ）
+  document.querySelectorAll('.task-delete-button').forEach(button => {
+    button.addEventListener('click', function () {
+      const taskId = this.dataset.taskId;
+
+      if (!confirm('このタスクを削除してもよろしいですか？')) {
+        return; // ユーザーがキャンセルを選択した場合
+      }
+
+      fetch(`/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to delete the task');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('タスク削除成功:', data);
+          const taskItem = document.querySelector(`.task-item[data-task-id="${taskId}"]`);
+          if (taskItem) {
+            taskItem.remove();
+          }
+        })
+        .catch(error => {
+          console.error('タスク削除失敗:', error);
+        });
+    });
+  });
 
   // デジタル時計を更新する関数
   function updateClock() {

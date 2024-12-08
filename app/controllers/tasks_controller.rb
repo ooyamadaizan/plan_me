@@ -41,6 +41,16 @@ class TasksController < ApplicationController
     end
   end
 
+  def destroy
+    @task = Task.find(params[:id])
+
+    if @task.destroy
+      render json: { message: 'Task successfully deleted' }, status: :ok
+    else
+      render json: { errors: @task.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   # タスクの並び順を再取得するアクション
   def reorder
     # ページネーションに対応して、指定されたオフセットから6件取得

@@ -7,5 +7,6 @@
     <input type="checkbox" class="task-status" data-task-id="<%= task.id %>" <%= 'checked' if task.completed %>>
     <label for="task-status">完了</label>
   </p>
+  <button class="task-delete-button btn btn-danger" data-task-id="<%= task.id %>" disabled>削除</button>
 </div>
 
