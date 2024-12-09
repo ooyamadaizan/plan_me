@@ -69,6 +69,7 @@
 | completed   | boolean    | null: false, default: false    |
 | created_at  | datetime   |                                |
 | updated_at  | datetime   |                                |
+| start_time  | datetime   |                                |
 | user        | references | null: false, foreign_key: true |
 
 ### Association
