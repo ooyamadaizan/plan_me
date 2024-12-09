@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let value = this.textContent;
             if (field === 'due_date') {
               value = value
-                .replace('期限: ', '') // "期限: "を削除
                 .replace(/年/, '-') // "年"を"-"に置換
                 .replace(/月/, '-') // "月"を"-"に置換
                 .replace(/日/, '') // "日"を削除

@@ -44,6 +44,7 @@
 - user_id: references (外部キー)
 - created_at: datetime
 - updated_at: datetime
+- start_time: datetime
 
 ## users テーブル
 

@@ -59,7 +59,7 @@ body {
 
 .task-details {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   margin-top: 0.1rem; /* Updated margin */
   font-size: 0.75rem;
@@ -227,3 +227,37 @@ body {
   }
 }
 
+/* トップヘッダーのスタイル */
+.top-header {
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.top-link {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav_btn {
+  text-decoration: none;
+  color: #007bff;
+  margin-left: 15px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.nav_btn:hover {
+  background-color: #e9ecef;
+}
+
+#logout-link {
+  color: #dc3545;
+}
+
+#edit-registration-link,
+#login-link,
+#sign-up-link {
+  color: #28a745;
+}
