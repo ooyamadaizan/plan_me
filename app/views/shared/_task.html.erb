@@ -1,7 +1,16 @@
 <div class="task-item mb-3" data-task-id="<%= task.id %>">
   <h3 class="task-title" contenteditable="true"><%= task.title %></h3>
   <p class="task-description" contenteditable="true"><%= task.description %></p>
-  <p>期限: <%= task.due_date.strftime('%Y年%m月%d日') %></p>
-  <p>状態: <%= task.completed ? '完了' : '未完了' %></p>
+   <div class="task-details">
+      期限: 
+    <p class="task-due-date" contenteditable="true"> <%= task.due_date.strftime('%Y年%m月%d日') %></p>
+    <p class="task-completed">
+      状態:
+      <input type="checkbox" class="task-status" data-task-id="<%= task.id %>" <%= 'checked' if task.completed %>>
+      <label for="task-status">完了</label>
+    </p>
+    <button class="task-delete-button btn btn-danger" data-task-id="<%= task.id %>" <%= task.completed? ? 1 : 'disabled' %>>削除</button>
+  </div>
 </div>
+
 
