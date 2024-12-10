@@ -189,14 +189,15 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // 削除ボタンのクリック処理（先ほどのコードと同じ）
-  document.querySelectorAll('.task-delete-button').forEach(button => {
-    button.addEventListener('click', function () {
-      const taskId = this.dataset.taskId;
-
+  document.getElementById('tasks-container').addEventListener('click', function (event) {
+    // クリックされた要素が削除ボタンか確認
+    if (event.target.classList.contains('task-delete-button')) {
+      const taskId = event.target.dataset.taskId;
+  
       if (!confirm('このタスクを削除してもよろしいですか？')) {
         return; // ユーザーがキャンセルを選択した場合
       }
-
+  
       fetch(`/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
@@ -211,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
           console.log('タスク削除成功:', data);
+          // 該当タスクを削除
           const taskItem = document.querySelector(`.task-item[data-task-id="${taskId}"]`);
           if (taskItem) {
             taskItem.remove();
@@ -219,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
           console.error('タスク削除失敗:', error);
         });
-    });
+    }
   });
 
   // デジタル時計を更新する関数
