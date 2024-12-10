@@ -69,60 +69,54 @@ document.addEventListener('DOMContentLoaded', function() {
     if (
       e.target.classList.contains('task-title') ||
       e.target.classList.contains('task-description') ||
-      e.target.classList.contains('task-status')||
-      e.target.classList.contains('task-due-date')
+      e.target.classList.contains('task-due-date') ||
+      e.target.classList.contains('task-status')
     ) {
        // タスクのステータス（完了チェック）を更新
-      if (e.target.classList.contains('task-status')) {
-        const taskItem = e.target.closest('.task-item');
-        const statusTaskId = e.target.closest('.task-item').dataset.taskId;
-        const completed = e.target.checked;
 
-        fetch(`/tasks/${statusTaskId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-          },
-          body: JSON.stringify({
-            task: {
-              completed: completed
-            }
-          })
-        })
-        .then(response => {
-          if (!response.ok) {
-            // エラーコードやレスポンス内容を含めたエラーを投げる
-            return response.json().then(err => {
-              throw new Error(err.errors || 'Unknown error');
-            });
-          }
-          return response.text().then(text => (text ? JSON.parse(text) : {}));
-        })
-        .then(() => {
-          if (completed) {
-            taskItem.classList.add('completed');
-          } else {
-            taskItem.classList.remove('completed');
-          }
-          showNotification('タスクが正常に更新されました！', 'success');
-        })
-        .catch(error => {
-          console.error('Error updating task:', error);
-          e.target.checked = !completed;
-          showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
-        });
-      }
-
-      // タイトルまたは説明の編集
-      if (
-        e.target.classList.contains('task-title') ||
-        e.target.classList.contains('task-description') ||
-        e.target.classList.contains('task-due-date')
-      ) {
         console.log('e.target:', e.target);
         console.log('Contains task-due-date:', e.target.classList.contains('task-due-date'));
 
+        if (e.target.classList.contains('task-status')) {
+          const taskItem = e.target.closest('.task-item');
+          const statusTaskId = taskItem.dataset.taskId;
+          const completed = e.target.checked;
+
+          fetch(`/tasks/${statusTaskId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+              task: {
+                completed: completed
+              }
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update the task status');
+            }
+            return response.json();
+          })
+          .then(() => {
+            const deleteButton = taskItem.querySelector('.task-delete-button');
+            deleteButton.disabled = !completed; // ステータスが「完了」なら削除ボタンを有効化        
+            if (completed) {
+              taskItem.classList.add('completed');// 完了タスクにクラスを追加
+            } else {
+              taskItem.classList.remove('completed');// 完了タスクのクラスを削除
+            }
+            showNotification('タスクが正常に更新されました！', 'success');
+          })
+          .catch(error => {
+            console.error('Error updating task:', error);
+            e.target.checked = !completed; // チェック状態を元に戻す
+            showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
+          });
+        } else {
+      // 他のフィールド（title, description, due_date）がクリックされた場合の処理
         e.target.addEventListener(
           'blur',
           function() {
@@ -138,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
               console.log('textContent:', this.textContent);
             // フィールドがnullの場合は何もしない
             if (!field) return;
+
             let value = this.textContent;
             if (field === 'due_date') {
               value = value
@@ -179,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
   document.querySelectorAll('.task-status').forEach(checkbox => {
     checkbox.addEventListener('change', function () {
       const taskItem = this.closest('.task-item');
