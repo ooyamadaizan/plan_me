@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // ボタンやイベントリスナーの初期化
+  console.log("DOMContentLoadedイベントが発火しました");
   let offset = 0;
 
   // 新しいタスクを作成するボタンのイベントリスナー
@@ -60,10 +62,11 @@ document.addEventListener('DOMContentLoaded', function() {
     notification.textContent = message;
     notification.className = `notification ${type}`; // 'success' or 'error'
     document.body.appendChild(notification);
-  
-    // 通知を3秒後に自動で削除
+
+    // 通知を1.3秒後に自動で削除
     setTimeout(() => notification.remove(), 1300);
   }
+
   // タスクのタイトルまたは説明のインライン編集を処理するイベントリスナー
   document.addEventListener('click', function(e) {
     if (
@@ -72,51 +75,48 @@ document.addEventListener('DOMContentLoaded', function() {
       e.target.classList.contains('task-due-date') ||
       e.target.classList.contains('task-status')
     ) {
-       // タスクのステータス（完了チェック）を更新
+      // タスクのステータス（完了チェック）を更新
 
-        console.log('e.target:', e.target);
-        console.log('Contains task-due-date:', e.target.classList.contains('task-due-date'));
+      if (e.target.classList.contains('task-status')) {
+        const taskItem = e.target.closest('.task-item');
+        const statusTaskId = taskItem.dataset.taskId;
+        const completed = e.target.checked;
 
-        if (e.target.classList.contains('task-status')) {
-          const taskItem = e.target.closest('.task-item');
-          const statusTaskId = taskItem.dataset.taskId;
-          const completed = e.target.checked;
-
-          fetch(`/tasks/${statusTaskId}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({
-              task: {
-                completed: completed
-              }
-            })
-          })
-          .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to update the task status');
+        fetch(`/tasks/${statusTaskId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({
+            task: {
+              completed: completed
             }
-            return response.json();
           })
-          .then(() => {
-            const deleteButton = taskItem.querySelector('.task-delete-button');
-            deleteButton.disabled = !completed; // ステータスが「完了」なら削除ボタンを有効化        
-            if (completed) {
-              taskItem.classList.add('completed');// 完了タスクにクラスを追加
-            } else {
-              taskItem.classList.remove('completed');// 完了タスクのクラスを削除
-            }
-            showNotification('タスクが正常に更新されました！', 'success');
-          })
-          .catch(error => {
-            console.error('Error updating task:', error);
-            e.target.checked = !completed; // チェック状態を元に戻す
-            showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
-          });
-        } else {
-      // 他のフィールド（title, description, due_date）がクリックされた場合の処理
+        })
+        .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to update the task status');
+          }
+          return response.json();
+        })
+        .then(() => {
+          const deleteButton = taskItem.querySelector('.task-delete-button');
+          deleteButton.disabled = !completed; // ステータスが「完了」なら削除ボタンを有効化        
+          if (completed) {
+            taskItem.classList.add('completed');// 完了タスクにクラスを追加
+          } else {
+            taskItem.classList.remove('completed');// 完了タスクのクラスを削除
+          }
+          showNotification('タスクが正常に更新されました！', 'success');
+        })
+        .catch(error => {
+          console.error('Error updating task:', error);
+          e.target.checked = !completed; // チェック状態を元に戻す
+          showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
+        });
+      } else {
+        // 他のフィールド（title, description, due_date）がクリックされた場合の処理
         e.target.addEventListener(
           'blur',
           function() {
@@ -128,8 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
               : this.classList.contains('task-due-date')
               ? 'due_date'
               : null;
-              console.log('this:', this);
-              console.log('textContent:', this.textContent);
+
             // フィールドがnullの場合は何もしない
             if (!field) return;
 
@@ -140,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/月/, '-') // "月"を"-"に置換
                 .replace(/日/, '') // "日"を削除
                 .trim(); // 前後の余計な空白を削除
-                console.log('変換後:', value);
             }
 
             fetch(`/tasks/${taskId}`, {
@@ -188,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 削除ボタンのクリック処理（先ほどのコードと同じ）
+  // 削除ボタンのクリック処理
   document.getElementById('tasks-container').addEventListener('click', function (event) {
     // クリックされた要素が削除ボタンか確認
     if (event.target.classList.contains('task-delete-button')) {
@@ -236,3 +234,20 @@ document.addEventListener('DOMContentLoaded', function() {
   updateClock();
 });
 
+function initializeButtonEvents() {
+  // ここにボタンのイベントリスナーを再度追加します
+  document.getElementById('create-task-btn').addEventListener('click', function() {
+    // ボタンクリック時の処理
+    console.log('タスク作成ボタンがクリックされました');
+    
+  });
+
+  // 他のボタンのイベントリスナーも同様に設定
+  document.getElementById('prev-tasks').addEventListener('click', function() {
+    console.log('前のページボタンがクリックされました');
+  });
+
+  document.getElementById('next-tasks').addEventListener('click', function() {
+    console.log('次のページボタンがクリックされました');
+  });
+}
