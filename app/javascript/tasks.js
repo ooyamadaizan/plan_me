@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
   // ボタンやイベントリスナーの初期化
-  console.log("DOMContentLoadedイベントが発火しました");
+  console.log("turbo:loadイベントが発火しました");
   let offset = 0;
 
   // 新しいタスクを作成するボタンのイベントリスナー
