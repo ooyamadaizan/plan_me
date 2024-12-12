@@ -233,21 +233,3 @@ document.addEventListener('turbo:load', function() {
   setInterval(updateClock, 1000);
   updateClock();
 });
-
-function initializeButtonEvents() {
-  // ここにボタンのイベントリスナーを再度追加します
-  document.getElementById('create-task-btn').addEventListener('click', function() {
-    // ボタンクリック時の処理
-    console.log('タスク作成ボタンがクリックされました');
-    
-  });
-
-  // 他のボタンのイベントリスナーも同様に設定
-  document.getElementById('prev-tasks').addEventListener('click', function() {
-    console.log('前のページボタンがクリックされました');
-  });
-
-  document.getElementById('next-tasks').addEventListener('click', function() {
-    console.log('次のページボタンがクリックされました');
-  });
-}
