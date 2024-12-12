@@ -1,90 +1,68 @@
-# ToDoカレンダーアプリ
+# Plan_Me
 
-## 概要
-このアプリケーションは、タスク管理とカレンダー機能を組み合わせた、シンプルで使いやすいToDoリストです。ユーザーは自分のタスクを作成し、カレンダー上で視覚的に管理することができます。
+## アプリケーション概要
+このアプリケーションは、タスク管理とカレンダー機能を組み合わせた、シンプルで使いやすいToDoリストです。ユーザーは自分のタスクを作成し、カレンダー上で視覚的に管理することができます。タスクごとに色分けや表示タイプを設定でき、効率的なタスク管理を実現します。
 
-## 主な機能
-1. ユーザー認証
-   - ログイン/ログアウト機能
-   - ユーザー登録機能
+## URL
+https://plan-me.onrender.com
 
-2. タスク管理
-   - タスクの作成、読み取り、更新、削除（CRUD）
-   - タスクへの締切日の設定
-   - タスクの完了状態の切り替え
-   - インラインでのタスク編集（タイトル、説明、期限日）
+## Basic認証
+- ID: admin 
+- パスワード: 4286
 
-3. カレンダー表示
-   - 月別カレンダーでのタスク表示
-   - タスクの締切日をカレンダーに反映
+## テスト用アカウント
+- メールアドレス: test@test.com
+- パスワード: 123456789
 
-4. デジタル時計
-   - リアルタイムで現在時刻を表示
+## 利用方法
+1. トップページからユーザー登録またはログインを行う
+2. 「新しいタスクを作成」ボタンをクリックし、タスクの詳細を入力する
+3. タスク一覧で作成したタスクを確認し、必要に応じて編集や削除を行う
+4. カレンダー表示で、タスクの期限や全体の予定を確認する
+5. タスクの完了状態を更新し、進捗を管理する
 
-5. ページネーション
-   - タスクリストの効率的な表示と管理
+## アプリケーションを作成した背景
+日々のタスク管理に悩む人々、特に視覚的な管理を好む方々のニーズに応えるため、このアプリケーションを開発しました。従来のToDoリストの機能性とカレンダーの視覚的わかりやすさを組み合わせることで、より直感的で効果的なタスク管理を実現することを目指しています。
 
-## 技術スタック
-- Ruby on Rails 7
-- PostgreSQL
-- JavaScript (Vanilla JS)
-- Devise（ユーザー認証）
-- Simple Calendar（カレンダー機能）
-- CSS（レスポンシブデザイン）
+## 実装した機能についての画像やGIFおよびその説明
+1. ユーザー認証機能
+   - ユーザーの登録、ログイン、ログアウトが可能
+   ※画像を追加予定
 
-## 主要なモデル
+2. タスク管理機能
+   - タスクの作成、編集、削除が可能
+   - タスクごとに色分けや表示タイプを設定可能
+   ※画像を追加予定
 
-### User（ユーザー）
-- id: integer
-- email: string
-- encrypted_password: string
-- nickname: string
-- created_at: datetime
-- updated_at: datetime
+3. カレンダー表示機能
+   - 月別カレンダーでタスクを視覚的に確認可能
+   - タスクの期限日に合わせて、設定した色とタイプのマーカーを表示
+   ※画像を追加予定
 
-### Task（タスク）
-- id: integer
-- title: string
-- description: text
-- due_date: date
-- completed: boolean
-- user_id: integer (外部キー)
-- created_at: datetime
-- updated_at: datetime
-- start_time: datetime
+4. リアルタイムデジタル時計
+   - 現在時刻をリアルタイムで表示
+   ※画像を追加予定
 
-## users テーブル
+5. ページネーション機能
+   - タスク一覧を6件ずつ表示し、ページ送りが可能
+   ※画像を追加予定
 
-| Column             | Type     | Options                   |
-| ------------------ | -------- | ------------------------- |
-| nickname           | string   | null: false               |
-| email              | string   | null: false, unique: true |
-| encrypted_password | string   | null: false               |
-| created_at         | datetime |                           |
-| updated_at         | datetime |                           |
+## 実装予定の機能
+- タスクの検索機能
 
-### Association
+## データベース設計
+※ER図を追加予定
 
-- has_many :tasks
+## 画面遷移図
+※画面遷移図を追加予定
 
-## tasks テーブル
+## 開発環境
+- フロントエンド: HTML, CSS, JavaScript
+- バックエンド: Ruby on Rails 7
+- データベース: PostgreSQL
+- 認証: Devise
+- カレンダー機能: simple_calendar gem
+- バージョン管理: Git, GitHub
 
-| Column      | Type       | Options                        |
-| ----------- | ---------- | ------------------------------ |
-| title       | string     | null: false                    |
-| description | text       | null: false                    |
-| due_date    | date       | null: false, index: true       |
-| completed   | boolean    | null: false, default: false    |
-| created_at  | datetime   |                                |
-| updated_at  | datetime   |                                |
-| start_time  | datetime   |                                |
-| user        | references | null: false, foreign_key: true |
+## ローカルでの動作方法
 
-### Association
-
-- belongs_to :user
-
-### Indexes
-
-- add_index :tasks, :user_id
-- add_index :tasks, :due_date
