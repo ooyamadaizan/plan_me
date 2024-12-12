@@ -22,11 +22,11 @@
     <%# カレンダー %>
     <div class="calendar-container">
       <h2>カレンダー</h2>
-      <%= month_calendar(events: @calendar_tasks) do |date, tasks| %>
+      <%= month_calendar(events: @calendar_tasks, attribute: :due_date) do |date, tasks| %>
         <%= date.day %>
         <% tasks.each do |task| %>
           <div class="calendar-task">
-            <%= task.title %>
+            <span class="task-marker <%= task.display_color %> <%= task.display_type %>" title="<%= task.title %>"></span>
           </div>
         <% end %>
       <% end %>

@@ -12,6 +12,14 @@
     <%= f.date_select :due_date, class: 'form-control' %>
   </div>
   <div class="form-group">
+    <%= f.label :display_color, '表示色' %>
+    <%= f.select :display_color, Task::DISPLAY_COLORS, {}, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= f.label :display_type, '表示タイプ' %>
+    <%= f.select :display_type, Task::DISPLAY_TYPES, {}, class: 'form-control' %>
+  </div>
+  <div class="form-group">
     <%= f.label :completed, '完了済み' %>
     <%= f.check_box :completed %>
   </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_05_055003) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_12_063637) do
   create_table "tasks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
@@ -20,6 +20,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_05_055003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "start_time"
+    t.string "display_color"
+    t.string "display_type"
     t.index ["due_date"], name: "index_tasks_on_due_date"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
