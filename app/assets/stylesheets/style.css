@@ -285,7 +285,6 @@ body {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 10px solid currentColor;
-  background-color: transparent !important;
 }
 .star {
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);

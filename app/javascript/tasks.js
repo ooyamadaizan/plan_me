@@ -17,7 +17,7 @@ document.addEventListener('turbo:load', function() {
           description: '内容を入力',
           due_date: new Date().toISOString().split('T')[0],
           display_color_id: 2, // 適切なIDを設定
-          display_type_id: 3  // 適切なIDを設定
+          display_type_id: 1  // 適切なIDを設定
         }
       })
     })
@@ -75,7 +75,9 @@ document.addEventListener('turbo:load', function() {
       e.target.classList.contains('task-title') ||
       e.target.classList.contains('task-description') ||
       e.target.classList.contains('task-due-date') ||
-      e.target.classList.contains('task-status')
+      e.target.classList.contains('task-status') ||
+      e.target.classList.contains('task-display-color') ||
+      e.target.classList.contains('task-display-type')
     ) {
       // タスクのステータス（完了チェック）を更新
 
@@ -129,12 +131,16 @@ document.addEventListener('turbo:load', function() {
               ? 'description'
               : this.classList.contains('task-due-date')
               ? 'due_date'
+              : this.classList.contains('task-display-color')
+              ? 'display_color_id'
+              : this.classList.contains('task-display-type')
+              ? 'display_type_id'
               : null;
 
             // フィールドがnullの場合は何もしない
             if (!field) return;
 
-            let value = this.textContent;
+            let value = this.value || this.textContent.trim(); 
             if (field === 'due_date') {
               value = value
                 .replace(/年/, '-') // "年"を"-"に置換

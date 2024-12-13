@@ -5,9 +5,29 @@
       期限: 
     <p class="task-due-date" contenteditable="true"> <%= task.due_date.strftime('%Y年%m月%d日') %></p>
     <p class="task-completed">
+
+      <!-- ここにアクティブハッシュのセレクトボックスを追加 -->
+      <%= select_tag "task[display_color_id]", 
+          options_from_collection_for_select(DisplayColor.all, :id, :name, task.display_color_id),
+          include_blank: '---',
+          class: "form-select task-display-color",
+          data: { task_id: task.id }
+      %>
+
+      <%= select_tag "task[display_type_id]", 
+          options_from_collection_for_select(DisplayType.all, :id, :name, task.display_type_id),
+          include_blank: '---',
+          class: "form-select task-display-type",
+          data: { task_id: task.id }
+      %>
+
+      <span class="task-marker <%= task.display_color.code %> <%= task.display_type.code %>"></span>
+
       状態:
       <input type="checkbox" class="task-status" data-task-id="<%= task.id %>" <%= 'checked' if task.completed %>>
       <label for="task-status">完了</label>
+
+
     </p>
     <button class="task-delete-button btn btn-danger" data-task-id="<%= task.id %>" <%= task.completed? ? 1 : 'disabled' %>>削除</button>
   </div>
