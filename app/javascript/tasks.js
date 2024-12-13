@@ -15,7 +15,9 @@ document.addEventListener('turbo:load', function() {
         task: {
           title: 'タイトル名を入力',
           description: '内容を入力',
-          due_date: new Date().toISOString().split('T')[0]
+          due_date: new Date().toISOString().split('T')[0],
+          display_color_id: 2, // 適切なIDを設定
+          display_type_id: 3  // 適切なIDを設定
         }
       })
     })

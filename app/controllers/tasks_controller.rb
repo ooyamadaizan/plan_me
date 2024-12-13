@@ -64,6 +64,6 @@ class TasksController < ApplicationController
   # タスクのパラメータを許可するメソッド
   def task_params
     # title, description, due_date, completed のみ許可
-    params.require(:task).permit(:title, :description, :due_date, :completed, :display_type)
+    params.require(:task).permit(:title, :description, :due_date, :completed, :display_color_id, :display_type_id)
   end
 end
