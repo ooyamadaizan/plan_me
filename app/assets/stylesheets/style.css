@@ -276,6 +276,9 @@ body {
 .yellow { background-color: #ffff00; }
 .purple { background-color: #800080; }
 .orange { background-color: #ffa500; }
+.default-color {
+  background-color: #e0e0e0; /* グレー系 */
+}
 
 .circle { border-radius: 50%; }
 .square { }
@@ -285,10 +288,13 @@ body {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-bottom: 10px solid currentColor;
-  background-color: transparent
+  background-color: transparent !important;
 }
 .star {
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.default-type {
+  border: 2px solid #b0b0b0; /* ボーダー */
 }
 
 .calendar-task {
