@@ -1,4 +1,4 @@
-<div class="task-item mb-3" data-task-id="<%= task.id %>" style="background-color: rgba(<%= color_to_rgb(task.display_color) %>, 0.12);">
+<div class="task-item mb-3" data-task-id="<%= task.id %>">
   <h3 class="task-title" contenteditable="true"><%= task.title %></h3>
   <p class="task-description" contenteditable="true"><%= task.description %></p>
    <div class="task-details">
@@ -9,7 +9,6 @@
       <input type="checkbox" class="task-status" data-task-id="<%= task.id %>" <%= 'checked' if task.completed %>>
       <label for="task-status">完了</label>
     </p>
-    <span class="task-marker <%= task.display_color %> <%= task.display_type %>"></span>
     <button class="task-delete-button btn btn-danger" data-task-id="<%= task.id %>" <%= task.completed? ? 1 : 'disabled' %>>削除</button>
   </div>
 </div>
