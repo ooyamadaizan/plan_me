@@ -27,6 +27,9 @@ document.addEventListener('turbo:load', function() {
       offset = 0;
       updatePaginationButtons();
       fetchTasks(); // 新しく作成したタスクを含めてリストを更新
+
+      // 自動リロードの追加
+      window.location.reload(); // 全体リロードでカレンダーも更新
     });
   });
 
@@ -284,6 +287,18 @@ document.addEventListener('turbo:load', function() {
                 console.warn("タスクマーカー要素が見つかりません");
               }
 
+              const calendarTaskMarker = document.querySelector(`.calendar-task .task-marker[data-task-id="${taskId}"]`);
+
+              if (calendarTaskMarker) {
+                // カレンダー側のクラス更新
+                const newCalendarClass = `task-marker ${updatedTask.display_color?.attributes?.code || 'default-color'} ${updatedTask.display_type?.attributes?.code || 'default-type'}`;
+                calendarTaskMarker.className = newCalendarClass;
+
+                console.log("カレンダーのクラス更新:", newCalendarClass);
+              } else {
+                console.warn("カレンダー内のタスクが見つかりません");
+              }
+
                 // 更新成功メッセージの表示
                 showNotification(data.message, 'success');
               })
@@ -291,6 +306,7 @@ document.addEventListener('turbo:load', function() {
                 console.error('エラー発生:', error);
                 showNotification('タスクの更新に失敗しました', 'error');
               });
+
           },
           { once: true }
         );
@@ -329,7 +345,7 @@ document.addEventListener('turbo:load', function() {
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Failed to delete the task');
+            throw new Error('タスクの削除に失敗しました');
           }
           return response.json();
         })
@@ -340,10 +356,12 @@ document.addEventListener('turbo:load', function() {
           if (taskItem) {
             taskItem.remove();
           }
+          window.location.reload();  // ページ全体のリロード
         })
         .catch(error => {
           console.error('タスク削除失敗:', error);
         });
+        
     }
   });
 

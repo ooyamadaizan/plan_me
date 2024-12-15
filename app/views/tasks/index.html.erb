@@ -26,7 +26,7 @@
         <%= date.day %>
         <% tasks.each do |task| %>
           <div class="calendar-task">
-            <span class="task-marker <%= task.display_color %> <%= task.display_type %>" title="<%= task.title %>"></span>
+            <span class="task-marker <%= task.display_color.code %> <%= task.display_type.code %>" title="<%= task.title %>" data-task-id="<%= task.id %>"></span>
           </div>
         <% end %>
       <% end %>
