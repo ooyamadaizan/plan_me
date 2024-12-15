@@ -27,6 +27,9 @@ document.addEventListener('turbo:load', function() {
       offset = 0;
       updatePaginationButtons();
       fetchTasks(); // 新しく作成したタスクを含めてリストを更新
+
+      // 自動リロードの追加
+      window.location.reload(); // 全体リロードでカレンダーも更新
     });
   });
 
@@ -342,7 +345,7 @@ document.addEventListener('turbo:load', function() {
       })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Failed to delete the task');
+            throw new Error('タスクの削除に失敗しました');
           }
           return response.json();
         })
@@ -353,10 +356,12 @@ document.addEventListener('turbo:load', function() {
           if (taskItem) {
             taskItem.remove();
           }
+          window.location.reload();  // ページ全体のリロード
         })
         .catch(error => {
           console.error('タスク削除失敗:', error);
         });
+        
     }
   });
 
