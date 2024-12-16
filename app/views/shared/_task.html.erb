@@ -9,14 +9,12 @@
       <!-- ここにアクティブハッシュのセレクトボックスを追加 -->
       <%= select_tag "task[display_color_id]", 
           options_from_collection_for_select(DisplayColor.all, :id, :name, task.display_color_id),
-          include_blank: '---',
           class: "form-select task-display-color",
           data: { task_id: task.id }
       %>
 
       <%= select_tag "task[display_type_id]", 
           options_from_collection_for_select(DisplayType.all, :id, :name, task.display_type_id),
-          include_blank: '---',
           class: "form-select task-display-type",
           data: { task_id: task.id }
       %>

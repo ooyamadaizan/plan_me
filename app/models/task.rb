@@ -10,6 +10,8 @@ class Task < ApplicationRecord
   validates :description, presence: true
   validates :due_date, presence: true 
   validates :completed, inclusion: { in: [true, false] } # 完了ステータスはtrueまたはfalseのみ
+  validates :display_color_id, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 6 }
+  validates :display_type_id, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 4 }
 
   # スコープ (簡潔に条件付きクエリを定義)
   scope :completed, -> { where(completed: true) } # 完了したタスクを取得
@@ -27,6 +29,8 @@ class Task < ApplicationRecord
   # プライベートメソッド
   def set_default_values
     self.completed = false if completed.nil?
+    self.display_color_id ||= 1
+    self.display_type_id ||= 1
   end
 
 end
