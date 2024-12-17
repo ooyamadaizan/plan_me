@@ -310,38 +310,40 @@ document.addEventListener('turbo:load', function() {
                 showNotification('タスクの更新に失敗しました', 'error');
               });
 
-            function syncCalendarTask(taskId, updatedTask) {
-              const calendarTaskMarker = document.querySelector(`.calendar-task .task-marker[data-task-id="${taskId}"]`);
-              if (!calendarTaskMarker) {
-                console.warn("カレンダー内のタスクが見つかりません");
-                return;
-              }
-            
-              const newDueDate = updatedTask.due_date;
-              const newCalendarDateElement = document.querySelector(`.calendar-date[data-date="${newDueDate}"]`);
-            
-              if (!newCalendarDateElement) {
-                console.warn("適切なカレンダーの日付要素が見つかりません");
-                return;
-              }
-            
-              const calendarParent = calendarTaskMarker.closest('.calendar-task');
-            
-              if (calendarParent.dataset.dueDate !== newDueDate) {
-                // 日付が異なる場合、カレンダー要素を移動
-                newCalendarDateElement.appendChild(calendarParent);
-                calendarParent.dataset.dueDate = newDueDate;
-                console.log("タスクが新しい日付に移動しました:", newDueDate);
-              } else {
-                console.log("日付が変更されていないため、カレンダーの更新は不要です");
-              }
-            }
           },
           { once: true }
         );
       }
     }
   });
+
+
+  function syncCalendarTask(taskId, updatedTask) {
+    const calendarTaskMarker = document.querySelector(`.calendar-task .task-marker[data-task-id="${taskId}"]`);
+    if (!calendarTaskMarker) {
+      console.warn("カレンダー内のタスクが見つかりません");
+      return;
+    }
+  
+    const newDueDate = updatedTask.due_date;
+    const newCalendarDateElement = document.querySelector(`.calendar-date[data-date="${newDueDate}"]`);
+  
+    if (!newCalendarDateElement) {
+      console.warn("適切なカレンダーの日付要素が見つかりません");
+      return;
+    }
+  
+    const calendarParent = calendarTaskMarker.closest('.calendar-task');
+  
+    if (calendarParent.dataset.dueDate !== newDueDate) {
+      // 日付が異なる場合、カレンダー要素を移動
+      newCalendarDateElement.appendChild(calendarParent);
+      calendarParent.dataset.dueDate = newDueDate;
+      console.log("タスクが新しい日付に移動しました:", newDueDate);
+    } else {
+      console.log("日付が変更されていないため、カレンダーの更新は不要です");
+    }
+  }
 
   document.querySelectorAll('.task-status').forEach(checkbox => {
     checkbox.addEventListener('change', function () {
