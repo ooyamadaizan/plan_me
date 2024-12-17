@@ -365,6 +365,26 @@ document.addEventListener('turbo:load', function() {
     }
   });
 
+  document.addEventListener("keydown", function (e) {
+    // エンターキーが押された場合
+    if (e.key === "Enter") {
+      const activeElement = document.activeElement;
+  
+      // 対象のクラスを確認
+      if (
+        activeElement.classList.contains("task-title") ||
+        activeElement.classList.contains("task-description") ||
+        activeElement.classList.contains("task-due-date") ||
+        activeElement.classList.contains("task-display-color") ||
+        activeElement.classList.contains("task-display-type")
+      ) {
+        e.preventDefault(); // フォーム送信の防止
+        activeElement.blur(); // フォーカスを外す
+        console.log("エンターキーでフォーカスを外しました");
+      }
+    }
+  });
+
   // デジタル時計を更新する関数
   function updateClock() {
     const now = new Date();
