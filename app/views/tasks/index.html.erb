@@ -23,6 +23,7 @@
     <div class="calendar-container">
       <h2>カレンダー</h2>
       <%= month_calendar(events: @calendar_tasks, attribute: :due_date) do |date, tasks| %>
+      <div class="calendar-date" data-date="<%= date.strftime('%Y-%m-%d') %>">
         <%= date.day %>
         <% tasks.each do |task| %>
           <div class="calendar-task">
