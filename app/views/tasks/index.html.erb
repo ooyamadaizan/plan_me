@@ -10,10 +10,12 @@
       <%= render partial: 'shared/task', collection: @tasks %>
     </div>
     <%# ページネーションボタン %>
-    <div class="pagination-buttons">
-      <button id="prev-tasks" class="btn btn-secondary">前の6件</button>
-      <button id="next-tasks" class="btn btn-secondary">次の6件</button>
-    </div>
+    <% if @total_tasks_count > 6 %>
+      <div class="pagination-buttons">
+        <button id="prev-tasks" class="btn btn-secondary">前の6件</button>
+        <button id="next-tasks" class="btn btn-secondary">次の6件</button>
+      </div>
+    <% end %>
   </div>
 
   <div class="right-column">

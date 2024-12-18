@@ -24,42 +24,49 @@ document.addEventListener('turbo:load', function() {
     .then(response => response.text())
     .then(html => {
       document.getElementById('tasks-container').innerHTML = html;
-      offset = 0;
-      updatePaginationButtons();
-      fetchTasks(); // 新しく作成したタスクを含めてリストを更新
-
-      // 自動リロードの追加
-      window.location.reload(); // 全体リロードでカレンダーも更新
+      // ページ全体をリロードして最新情報を表示
+      window.location.reload();
     });
   });
 
-  // 前のページへ移動するボタンのイベントリスナー
+  // ページネーションボタンを取得
+  const prevButton = document.getElementById('prev-tasks');
+  const nextButton = document.getElementById('next-tasks');
+
+  if (prevButton && nextButton) {
+
+  // ページネーションのイベントリスナーを初期化
   document.getElementById('prev-tasks').addEventListener('click', function() {
-    offset = Math.max(0, offset - 6);
-    fetchTasks();
+    offset = Math.max(0, offset - 6); // オフセットを6減少
+    fetchTasks(offset);               // タスクの再取得
   });
 
-  // 次のページへ移動するボタンのイベントリスナー
   document.getElementById('next-tasks').addEventListener('click', function() {
-    offset += 6;
-    fetchTasks();
+    offset += 6;                      // オフセットを6増加
+    fetchTasks(offset);               // タスクの再取得
   });
 
-  // サーバーからタスクを取得する関数
-  function fetchTasks() {
+  // タスクをサーバーから取得する関数
+  function fetchTasks(offset) {
     fetch(`/tasks/reorder?offset=${offset}`)
       .then(response => response.text())
       .then(html => {
         document.getElementById('tasks-container').innerHTML = html;
-        updatePaginationButtons();
+        updatePaginationButtons(offset); // ページネーションの状態を更新
       });
   }
 
   // ページネーションボタンの状態を更新する関数
-  function updatePaginationButtons() {
-    document.getElementById('prev-tasks').disabled = offset === 0;
-    document.getElementById('next-tasks').disabled =
-      document.querySelectorAll('#tasks-container > div').length < 6;
+  function updatePaginationButtons(offset) {
+    const taskCount = document.querySelectorAll('#tasks-container > div').length;
+
+    // ボタンの無効化判定
+    document.getElementById('prev-tasks').disabled = offset === 0;   // 最初のページなら無効化
+    document.getElementById('next-tasks').disabled = taskCount < 6; // タスクが6件未満なら無効化
+  }
+
+  // 初回のタスク取得とページネーション状態の更新
+  fetchTasks(offset);
   }
 
   function showNotification(message, type) {
