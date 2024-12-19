@@ -7,7 +7,6 @@ class User < ApplicationRecord
   has_many :tasks
 
   validates :nickname, presence: true, length: { maximum: 50 }
-  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
 end
