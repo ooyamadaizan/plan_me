@@ -340,6 +340,8 @@ document.addEventListener('turbo:load', function() {
       console.warn("適切なカレンダーの日付要素が見つかりません");
       return;
     }
+
+    calendarTaskMarker.setAttribute('title', updatedTask.title);
   
     const calendarParent = calendarTaskMarker.closest('.calendar-task');
   
