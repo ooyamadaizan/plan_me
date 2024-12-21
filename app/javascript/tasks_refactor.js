@@ -76,6 +76,13 @@ async function fetchTasks(offset) {
 
       const html = await response.text();
       document.getElementById('tasks-container').innerHTML = html;
+
+
+      // ページネーションボタンの状態を更新
+      const taskCount = document.querySelectorAll('#tasks-container > div').length;
+
+      document.getElementById('prev-tasks').disabled = offset === 0;   // 最初のページなら無効化
+      document.getElementById('next-tasks').disabled = taskCount < 6; // タスクが6件未満なら無効化
   } catch (error) {
       console.error(error);
   }
