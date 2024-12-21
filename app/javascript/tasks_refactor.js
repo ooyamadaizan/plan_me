@@ -135,10 +135,14 @@ async function handleInlineEditing(element) {
           const taskItem = element.closest('.task-item');
           const taskId = taskItem.dataset.taskId;
           const field = getFieldName(element);
-          const value = element.textContent.trim();
+          let value = element.textContent.trim();
 
           if (!field) return;
 
+          // 期日のフォーマット処理
+          if (field === 'due_date') {
+            value = formatDate(value);
+        }
           try {
               const response = await fetch(`/tasks/${taskId}`, {
                   method: 'PATCH',
@@ -166,6 +170,15 @@ function getFieldName(element) {
   if (element.classList.contains('task-description')) return 'description';
   if (element.classList.contains('task-due-date')) return 'due_date';
   return null;
+}
+
+// === 日付フォーマット専用関数 ===
+function formatDate(dateStr) {
+  return dateStr
+      .replace(/年/, '-')  // "年"を"-"に置換
+      .replace(/月/, '-')  // "月"を"-"に置換
+      .replace(/日/, '')   // "日"を削除
+      .trim();             // 前後の余計な空白を削除
 }
 
 // === カレンダー同期 ===
