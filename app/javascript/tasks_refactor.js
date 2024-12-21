@@ -5,7 +5,7 @@ function initializeApp() {
   console.log("turbo:loadイベントが発火しました");
   initTaskCreation();
   initPagination();
-  initInlineEditing();
+  initInlineEditingFocus()
   initTaskDeletion();
   initClock();
 }
@@ -115,20 +115,47 @@ function initTaskDeletion() {
   });
 }
 
-// === インライン編集機能 ===
-function initInlineEditing() {
-  document.addEventListener('click', function (e) {
+function initInlineEditingFocus() {
+  document.addEventListener('focusin', function (e) {
       if (
           e.target.classList.contains('task-title') ||
           e.target.classList.contains('task-description') ||
           e.target.classList.contains('task-due-date')
       ) {
-          handleInlineEditing(e.target);
+          console.log("フォーカスが当たりました:", e.target);
+          e.target.classList.add('editing'); // 編集中クラスを追加
+          handleInlineEditing(e.target); // フォーカスアウト時の処理
+      }
+  });
+
+  document.addEventListener('focusout', function (e) {
+      if (e.target.classList.contains('editing')) {
+          console.log("フォーカスが外れました:", e.target);
+          e.target.classList.remove('editing'); // 編集中クラスを削除
       }
   });
 }
 
+document.addEventListener("keydown", function (e) {
+  // エンターキーが押された場合
+  if (e.key === "Enter") {
+    const activeElement = document.activeElement;
+
+    // 対象のクラスを確認
+    if (
+      activeElement.classList.contains("task-title") ||
+      activeElement.classList.contains("task-description") ||
+      activeElement.classList.contains("task-due-date") 
+    ) {
+      e.preventDefault(); // フォーム送信の防止
+      activeElement.blur(); // フォーカスを外す
+      console.log("エンターキーでフォーカスを外しました");
+    }
+  }
+});
+
 async function handleInlineEditing(element) {
+  console.log("インライン編集ハンドラが設定されました:", element);
   element.addEventListener(
       'blur',
       async function () {
@@ -137,12 +164,19 @@ async function handleInlineEditing(element) {
           const field = getFieldName(element);
           let value = element.textContent.trim();
 
+          console.log("フォーカスアウト時の値:", value); // フォーカスアウト直後の値を確認
+
           if (!field) return;
 
           // 期日のフォーマット処理
           if (field === 'due_date') {
             value = formatDate(value);
-        }
+            if (value === "不正な日付") {
+              alert("不正な日付形式です。正しい形式で入力してください。");
+              return; // 無効な日付の場合は保存を中止
+            }
+          }
+
           try {
               const response = await fetch(`/tasks/${taskId}`, {
                   method: 'PATCH',
@@ -174,11 +208,42 @@ function getFieldName(element) {
 
 // === 日付フォーマット専用関数 ===
 function formatDate(dateStr) {
-  return dateStr
-      .replace(/年/, '-')  // "年"を"-"に置換
-      .replace(/月/, '-')  // "月"を"-"に置換
-      .replace(/日/, '')   // "日"を削除
-      .trim();             // 前後の余計な空白を削除
+  let year, month, day;
+
+  // 入力の正規化（記号とスペースの削除）
+  const cleanDateStr = dateStr.replace(/[\s年月日/-]/g, "").replace(/\./g, "");
+  console.log("整形中のcleanDateStr:", cleanDateStr);
+  
+  // 日付形式の判定と整形
+  if (/^\d{8}$/.test(cleanDateStr)) {
+      // YYYYMMDD の形式
+      year = cleanDateStr.slice(0, 4);
+      month = cleanDateStr.slice(4, 6);
+      day = cleanDateStr.slice(6, 8);
+  } else if (/^\d{4}$/.test(cleanDateStr)) {
+      // MMDD の形式
+      year = new Date().getFullYear(); // 現在の年を補完
+      month = cleanDateStr.slice(0, 2);
+      day = cleanDateStr.slice(2, 4);
+  } else if (/^\d{1,2}月\d{1,2}日$/.test(dateStr)) {
+      year = new Date().getFullYear(); // 現在の年を補完
+      [month, day] = dateStr.match(/\d+/g);
+  } else if (/^\d{1,2}\/\d{1,2}$/.test(dateStr)) {
+      year = new Date().getFullYear(); // 現在の年を補完
+      [month, day] = dateStr.split("/");
+  } else if (/^\d{1,2}\.\d{1,2}$/.test(dateStr)) {
+      year = new Date().getFullYear(); // 現在の年を補完
+      [month, day] = dateStr.split(".");
+  } else if (/^\d{1,2}-\d{1,2}$/.test(dateStr)) {
+      year = new Date().getFullYear(); // 現在の年を補完
+      [month, day] = dateStr.split("-");
+  } else {
+      console.warn("不正な日付形式:", dateStr);
+      return "不正な日付";
+  }
+
+  // 日付をYYYY-MM-DD形式で整形
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
 // === カレンダー同期 ===
