@@ -7,6 +7,7 @@ function initializeApp() {
   initPagination();
   initTaskCompletion();
   initInlineEditingFocus();
+  initActiveHashSave();
   initTaskDeletion();
   initClock();
 }
@@ -225,6 +226,7 @@ async function handleInlineEditing(element) {
           const taskId = taskItem.dataset.taskId;
           const field = getFieldName(element);
           let value = element.textContent.trim();
+          const { saveFormat, displayFormat } = formatDate(value);
 
           console.log("フォーカスアウト時の値:", value); // フォーカスアウト直後の値を確認
 
@@ -232,11 +234,13 @@ async function handleInlineEditing(element) {
 
           // 期日のフォーマット処理
           if (field === 'due_date') {
-            value = formatDate(value);
-            if (value === "不正な日付") {
+
+            console.log(formatDate(value))
+            if (saveFormat === "不正な日付") {
                 showNotification("不正な日付形式です。正しい形式で入力してください。", 'error');
                 return; // 無効な日付の場合は保存を中止
-            }
+            }      
+            value = saveFormat;
           }
 
           try {
@@ -253,6 +257,11 @@ async function handleInlineEditing(element) {
 
               const updatedTask = await response.json();
               console.log("保存成功:", updatedTask);
+
+              if (field === 'due_date') {
+                element.textContent = displayFormat;
+                console.log("表示を更新しました:", displayFormat);
+              }
 
               // 保存成功時の通知
               showNotification('タスクが正常に保存されました！', 'success');
@@ -277,50 +286,102 @@ function getFieldName(element) {
 
 // === 日付フォーマット専用関数 ===
 function formatDate(dateStr) {
-  let year, month, day;
+    let year, month, day;
 
-  // 入力の正規化（記号とスペースの削除）
-  const cleanDateStr = dateStr.replace(/[\s年月日/-]/g, "").replace(/\./g, "");
-  console.log("整形中のcleanDateStr:", cleanDateStr);
-  
-  // 日付形式の判定と整形
-  if (/^\d{8}$/.test(cleanDateStr)) {
-      // YYYYMMDD の形式
-      year = cleanDateStr.slice(0, 4);
-      month = cleanDateStr.slice(4, 6);
-      day = cleanDateStr.slice(6, 8);
-  } else if (/^\d{4}$/.test(cleanDateStr)) {
-      // MMDD の形式
-      year = new Date().getFullYear(); // 現在の年を補完
-      month = cleanDateStr.slice(0, 2);
-      day = cleanDateStr.slice(2, 4);
-  } else if (/^\d{1,2}月\d{1,2}日$/.test(dateStr)) {
-      year = new Date().getFullYear(); // 現在の年を補完
-      [month, day] = dateStr.match(/\d+/g);
-  } else if (/^\d{1,2}\/\d{1,2}$/.test(dateStr)) {
-      year = new Date().getFullYear(); // 現在の年を補完
-      [month, day] = dateStr.split("/");
-  } else if (/^\d{1,2}\.\d{1,2}$/.test(dateStr)) {
-      year = new Date().getFullYear(); // 現在の年を補完
-      [month, day] = dateStr.split(".");
-  } else if (/^\d{1,2}-\d{1,2}$/.test(dateStr)) {
-      year = new Date().getFullYear(); // 現在の年を補完
-      [month, day] = dateStr.split("-");
-  } else {
-      console.warn("不正な日付形式:", dateStr);
-      return "不正な日付";
-  }
+    // 入力の正規化（記号とスペースの削除）
+    const cleanDateStr = dateStr.replace(/[\s年月日/-]/g, "").replace(/\./g, "");
+    console.log("整形中のcleanDateStr:", cleanDateStr);
 
-  // 日付をYYYY-MM-DD形式で整形
-  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    // 日付形式の判定と整形
+    if (/^\d{8}$/.test(cleanDateStr)) {
+        // YYYYMMDD の形式
+        year = cleanDateStr.slice(0, 4);
+        month = cleanDateStr.slice(4, 6);
+        day = cleanDateStr.slice(6, 8);
+    } else if (/^\d{4}$/.test(cleanDateStr)) {
+        // MMDD の形式
+        year = new Date().getFullYear(); // 現在の年を補完
+        month = cleanDateStr.slice(0, 2);
+        day = cleanDateStr.slice(2, 4);
+    } else if (/^\d{1,2}月\d{1,2}日$/.test(dateStr)) {
+        year = new Date().getFullYear(); // 現在の年を補完
+        [month, day] = dateStr.match(/\d+/g);
+    } else if (/^\d{1,2}\/\d{1,2}$/.test(dateStr)) {
+        year = new Date().getFullYear(); // 現在の年を補完
+        [month, day] = dateStr.split("/");
+    } else if (/^\d{1,2}\.\d{1,2}$/.test(dateStr)) {
+        year = new Date().getFullYear(); // 現在の年を補完
+        [month, day] = dateStr.split(".");
+    } else if (/^\d{1,2}-\d{1,2}$/.test(dateStr)) {
+        year = new Date().getFullYear(); // 現在の年を補完
+        [month, day] = dateStr.split("-");
+    } else {
+        console.warn("不正な日付形式:", dateStr);
+        return { saveFormat: "不正な日付", displayFormat: "不正な日付" };
+    }
+
+    // 保存用と表示用のフォーマットを作成
+    const saveFormat = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    const displayFormat = `${year}年${parseInt(month, 10)}月${parseInt(day, 10)}日`;
+
+    return { saveFormat, displayFormat };
+}
+
+function initActiveHashSave() {
+    document.addEventListener('change', async function (e) {
+        if (
+            !e.target.classList.contains('task-display-color') &&
+            !e.target.classList.contains('task-display-type')
+        ) return;
+
+        const taskItem = e.target.closest('.task-item');
+        const taskId = taskItem.dataset.taskId;
+        const field = e.target.classList.contains('task-display-color') ? 'display_color_id' : 'display_type_id';
+        const value = e.target.value;
+
+        try {
+            console.log("アクティブハッシュを保存中:", { taskId, field, value });
+
+            const response = await fetch(`/tasks/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({
+                    task: { [field]: value }
+                }),
+            });
+
+            if (!response.ok) throw new Error('アクティブハッシュの更新に失敗しました');
+
+            const updatedTask = await response.json();
+            console.log("保存成功:", updatedTask);
+
+            // カレンダーと同期
+            syncCalendarTask(taskId, updatedTask);
+
+            // 成功通知
+            showNotification('アクティブハッシュが正常に保存されました！', 'success');
+        } catch (error) {
+            console.error("保存エラー:", error);
+
+            // 失敗通知
+            showNotification('アクティブハッシュの保存に失敗しました', 'error');
+        }
+    });
 }
 
 // === カレンダー同期 ===
 function syncCalendarTask(taskId, updatedTask) {
   const calendarTaskMarker = document.querySelector(`.calendar-task .task-marker[data-task-id="${taskId}"]`);
-  if (!calendarTaskMarker) return;
+  if (!calendarTaskMarker) {
+    console.warn("カレンダー内のタスクマーカーが見つかりません:", taskId);
+    return;
+    }
+    // タイトルの更新
+    calendarTaskMarker.setAttribute('title', updatedTask.title);
 
-  calendarTaskMarker.setAttribute('title', updatedTask.title);
   const newDueDate = updatedTask.due_date;
   const newCalendarDate = document.querySelector(`.calendar-date[data-date="${newDueDate}"]`);
 
