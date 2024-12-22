@@ -5,7 +5,8 @@ function initializeApp() {
   console.log("turbo:loadイベントが発火しました");
   initTaskCreation();
   initPagination();
-  initInlineEditingFocus()
+  initTaskCompletion();
+  initInlineEditingFocus();
   initTaskDeletion();
   initClock();
 }
@@ -86,6 +87,67 @@ async function fetchTasks(offset) {
   } catch (error) {
       console.error(error);
   }
+}
+
+// === 通知表示用関数 ===
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.className = `notification ${type}`; // 'success' or 'error'
+    document.body.appendChild(notification);
+
+    // 通知を1.3秒後に自動で削除
+    setTimeout(() => notification.remove(), 1300);
+}
+
+// === タスク完了用チェックボックスの保存処理 ===
+function initTaskCompletion() {
+    document.addEventListener('change', async function (e) {
+        if (!e.target.classList.contains('task-status')) return;
+
+        const taskItem = e.target.closest('.task-item');
+        const statusTaskId = taskItem.dataset.taskId;
+        const completed = e.target.checked;
+
+        try {
+            console.log("タスク完了状態を更新中:", { taskId: statusTaskId, completed });
+            
+            const response = await fetch(`/tasks/${statusTaskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({
+                    task: { completed }
+                }),
+            });
+
+            if (!response.ok) throw new Error('タスクの更新に失敗しました');
+
+            // DOMの更新
+            updateTaskStatusUI(taskItem, completed);
+
+            // 通知を表示
+            showNotification('タスクが正常に更新されました！', 'success');
+        } catch (error) {
+            console.error("タスク更新エラー:", error);
+            e.target.checked = !completed; // チェック状態を元に戻す
+            showNotification(`タスクの更新に失敗しました: ${error.message}`, 'error');
+        }
+    });
+}
+
+// UIを更新するヘルパー関数
+function updateTaskStatusUI(taskItem, completed) {
+    const deleteButton = taskItem.querySelector('.task-delete-button');
+    deleteButton.disabled = !completed; // 完了状態に応じて削除ボタンを切り替え
+
+    if (completed) {
+        taskItem.classList.add('completed'); // 完了タスクにクラスを追加
+    } else {
+        taskItem.classList.remove('completed'); // 完了タスクのクラスを削除
+    }
 }
 
 // === タスク削除機能 ===
@@ -172,8 +234,8 @@ async function handleInlineEditing(element) {
           if (field === 'due_date') {
             value = formatDate(value);
             if (value === "不正な日付") {
-              alert("不正な日付形式です。正しい形式で入力してください。");
-              return; // 無効な日付の場合は保存を中止
+                showNotification("不正な日付形式です。正しい形式で入力してください。", 'error');
+                return; // 無効な日付の場合は保存を中止
             }
           }
 
@@ -190,9 +252,16 @@ async function handleInlineEditing(element) {
               if (!response.ok) throw new Error('タスク更新に失敗しました');
 
               const updatedTask = await response.json();
+              console.log("保存成功:", updatedTask);
+
+              // 保存成功時の通知
+              showNotification('タスクが正常に保存されました！', 'success');
               syncCalendarTask(taskId, updatedTask);
           } catch (error) {
               console.error(error);
+
+              // 保存失敗時の通知
+              showNotification('タスクの保存に失敗しました', 'error');
           }
       },
       { once: true }
