@@ -358,6 +358,24 @@ function initActiveHashSave() {
             const updatedTask = await response.json();
             console.log("保存成功:", updatedTask);
 
+            const taskMarker = taskItem.querySelector('.task-marker');
+
+            if (taskMarker) {
+              // クラス名の動的設定 (デフォルト値の適用)
+              const colorClass = updatedTask.task.display_color?.attributes?.code || 'default-color';
+              const typeClass = updatedTask.task.display_type?.attributes?.code || 'default-type';
+
+              // クラス名の設定
+              const newClass = `task-marker ${colorClass} ${typeClass}`;
+              taskMarker.className = newClass;
+
+              console.log("新しいクラスが適用されました:", newClass);
+              console.log("更新されたタスク:", updatedTask);
+            } else {
+              console.warn("タスクマーカー要素が見つかりません");
+            }
+
+
             // カレンダーと同期
             syncCalendarTask(taskId, updatedTask);
 
@@ -380,13 +398,27 @@ function syncCalendarTask(taskId, updatedTask) {
     return;
     }
     // タイトルの更新
-    calendarTaskMarker.setAttribute('title', updatedTask.title);
+  calendarTaskMarker.setAttribute('title', updatedTask.task.title);
+  const colorClass = updatedTask.task.display_color?.attributes?.code || 'default-color';
+  const typeClass = updatedTask.task.display_type?.attributes?.code || 'default-type';
+  const newCalendarClass = `task-marker ${colorClass} ${typeClass}`;
+  calendarTaskMarker.className = newCalendarClass;
 
-  const newDueDate = updatedTask.due_date;
-  const newCalendarDate = document.querySelector(`.calendar-date[data-date="${newDueDate}"]`);
+  console.log("カレンダーのクラス更新:", newCalendarClass);
 
-  if (newCalendarDate) {
-      newCalendarDate.appendChild(calendarTaskMarker);
+  const newDueDate = updatedTask.task.due_date;
+  const newCalendarDateElement = document.querySelector(`.calendar-date[data-date="${newDueDate}"]`);
+
+  if (newCalendarDateElement) {
+    const calendarParent = calendarTaskMarker.closest('.calendar-task');
+    if (calendarParent.dataset.dueDate !== newDueDate) {
+        newCalendarDateElement.appendChild(calendarParent);
+        calendarParent.dataset.dueDate = newDueDate;
+
+        console.log(`タスクマーカーを新しい日付 (${newDueDate}) に移動しました。`);
+    }
+  } else {
+    console.warn("指定された日付のカレンダー要素が見つかりません:", newDueDate);
   }
 }
 
