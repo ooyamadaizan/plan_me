@@ -65,6 +65,11 @@ body {
   font-size: 0.75rem;
 }
 
+.editing {
+  border: 1px solid #007BFF; /* 編集中であることを強調 */
+  background-color: #f0f8ff;
+}
+
 .task-due-date,
 .task-completed,
 .task-delete-button {

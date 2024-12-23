@@ -44,7 +44,7 @@ end
         success: true,
         message: "Task updated successfully",
         task: @task.as_json(
-          only: [:title, :description, :due_date],
+          only: [:title, :description, :due_date, ],
           methods: [:display_color, :display_type]
         )
       }, status: :ok
